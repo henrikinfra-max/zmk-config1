@@ -60,21 +60,21 @@
             compatible = "zmk,behavior-macro";
             label = "AA_MACRO";
             #binding-cells = <0>;
-            bindings = <&kp RA(A)>;
+            bindings = <&macro_tap &kp RA(A)>;
         };
 
         ae_macro: ae_macro {
             compatible = "zmk,behavior-macro";
             label = "AE_MACRO";
             #binding-cells = <0>;
-            bindings = <&kp RA(SEMICOLON)>;
+            bindings = <&macro_tap &kp RA(SEMICOLON)>;
         };
 
         oslash_macro: oslash_macro {
             compatible = "zmk,behavior-macro";
             label = "OSLASH_MACRO";
             #binding-cells = <0>;
-            bindings = <&kp RA(O)>;
+            bindings = <&macro_tap &kp RA(O)>;
         };
 
         // Hold-tap behaviors for Nordic characters
