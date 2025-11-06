@@ -132,8 +132,8 @@
             label = "Base";
             bindings = <
                 &kp Q       &kp W       &kp E        &kp R        &kp T         &kp Y         &kp U       &ht_i_aa LBKT I       &ht_o_ae SQT O       &ht_p_oslash SEMI P
-       &hm LGUI A  &hm LALT S  &hm LCTRL D  &hm LSHIFT F      &kp G         &kp H    &hm RSHFT J    &hm RCTRL K       &hm RALT L  &hm RGUI F5
-&lt Fun ESCAPE       &kp Z       &kp X          &kp C         &kp V      &kp B         &kp N         &kp M      &kp COMMA        &kp DOT           &kp SLASH  &lt Button APOSTROPHE
+       &hm LGUI A  &hm LALT S  &hm LCTRL D  &hm LSHIFT F      &kp G         &kp H    &hm RSHFT J    &hm RCTRL K       &hm RALT L  &hm RGUI SEMICOLON
+&lt Fun ESCAPE       &kp Z       &kp X          &kp C         &kp V      &kp B         &kp N         &kp M      &kp COMMA        &kp DOT           &kp SLASH  &lt Button F5
                                         &mt LCTRL DEL     &lt Nav TAB  &kp SPACE     &kp RET  &lt Sym BSPC        &kp MINUS
             >;
         };
@@ -182,8 +182,8 @@
             label = "Mac";
             bindings = <
                 &kp Q       &kp W       &kp E        &kp R        &kp T         &kp Y         &kp U       &ht_i_aa LBKT I       &ht_o_ae SQT O       &ht_p_oslash SEMI P
-       &hm LALT A  &hm LGUI S  &hm LCTRL D  &hm LSHIFT F      &kp G         &kp H    &hm RSHFT J    &hm RCTRL K       &hm RGUI L  &hm RALT F5
-&lt MacSym ESCAPE       &kp Z       &kp X          &kp C         &kp V      &kp B         &kp N         &kp M      &kp COMMA        &kp DOT           &kp SLASH  &to Base
+       &hm LALT A  &hm LGUI S  &hm LCTRL D  &hm LSHIFT F      &kp G         &kp H    &hm RSHFT J    &hm RCTRL K       &hm RGUI L  &hm RALT SEMICOLON
+&lt MacSym ESCAPE       &kp Z       &kp X          &kp C         &kp V      &kp B         &kp N         &kp M      &kp COMMA        &kp DOT           &kp SLASH  &kp F5
                                         &mt LCTRL DEL  &lt MacNav TAB  &kp SPACE     &kp RET  &lt MacSym BSPC        &kp MINUS
             >;
         };
