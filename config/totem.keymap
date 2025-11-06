@@ -55,35 +55,57 @@
             bindings = <&kp>, <&kp>;
         };
 
-        // Nordic character hold-tap behaviors
+        // Macros for Nordic characters
+        aa_macro: aa_macro {
+            compatible = "zmk,behavior-macro";
+            label = "AA_MACRO";
+            #binding-cells = <0>;
+            bindings = <&kp RA(A)>;
+        };
+
+        ae_macro: ae_macro {
+            compatible = "zmk,behavior-macro";
+            label = "AE_MACRO";
+            #binding-cells = <0>;
+            bindings = <&kp RA(SEMICOLON)>;
+        };
+
+        oslash_macro: oslash_macro {
+            compatible = "zmk,behavior-macro";
+            label = "OSLASH_MACRO";
+            #binding-cells = <0>;
+            bindings = <&kp RA(O)>;
+        };
+
+        // Hold-tap behaviors for Nordic characters
         ht_i_aa: ht_i_aa {
             compatible = "zmk,behavior-hold-tap";
             label = "I_AA";
-            #binding-cells = <2>;
+            #binding-cells = <0>;
             flavor = "tap-preferred";
             tapping-term-ms = <250>;
             quick-tap-ms = <125>;
-            bindings = <&kp>, <&kp>;
+            bindings = <&aa_macro>, <&kp I>;
         };
 
         ht_o_ae: ht_o_ae {
             compatible = "zmk,behavior-hold-tap";
             label = "O_AE";
-            #binding-cells = <2>;
+            #binding-cells = <0>;
             flavor = "tap-preferred";
             tapping-term-ms = <250>;
             quick-tap-ms = <125>;
-            bindings = <&kp>, <&kp>;
+            bindings = <&ae_macro>, <&kp O>;
         };
 
         ht_p_oslash: ht_p_oslash {
             compatible = "zmk,behavior-hold-tap";
             label = "P_OSLASH";
-            #binding-cells = <2>;
+            #binding-cells = <0>;
             flavor = "tap-preferred";
             tapping-term-ms = <250>;
             quick-tap-ms = <125>;
-            bindings = <&kp>, <&kp>;
+            bindings = <&oslash_macro>, <&kp P>;
         };
     };
 
@@ -97,10 +119,10 @@
         Base {
             label = "Base";
             bindings = <
-                        &kp Q       &kp W          &kp E         &kp R      &kp T    &kp Y        &kp U     &ht_i_aa RA(A) I  &ht_o_ae RA(SEMICOLON) O               &ht_p_oslash RA(O) P
-                   &hm LGUI A  &hm LALT S    &hm LCTRL D  &hm LSHIFT F      &kp G    &kp H  &hm RSHFT J  &hm RCTRL K  &hm RALT L  &hm RGUI SEMICOLON
-    &lt Fun ESCAPE     &kp Z       &kp X          &kp C         &kp V      &kp B    &kp N        &kp M    &kp COMMA     &kp DOT           &kp SLASH  &lt Button APOSTROPHE
-                                           &mt LCTRL DEL     &lt Nav TAB  &kp SPACE  &kp RET   &lt Sym BSPC    &kp MINUS
+                &kp Q       &kp W       &kp E        &kp R        &kp T         &kp Y         &kp U          &ht_i_aa          &ht_o_ae          &ht_p_oslash
+       &hm LGUI A  &hm LALT S  &hm LCTRL D  &hm LSHIFT F      &kp G         &kp H    &hm RSHFT J    &hm RCTRL K       &hm RALT L  &hm RGUI SEMICOLON
+&lt Fun ESCAPE       &kp Z       &kp X          &kp C         &kp V      &kp B         &kp N         &kp M      &kp COMMA        &kp DOT           &kp SLASH  &lt Button APOSTROPHE
+                                        &mt LCTRL DEL     &lt Nav TAB  &kp SPACE     &kp RET  &lt Sym BSPC        &kp MINUS
             >;
         };
 
@@ -147,10 +169,10 @@
         MacBase {
             label = "Mac";
             bindings = <
-                        &kp Q       &kp W          &kp E         &kp R      &kp T    &kp Y        &kp U     &ht_i_aa RA(A) I  &ht_o_ae RA(SEMICOLON) O               &ht_p_oslash RA(O) P
-                   &hm LALT A  &hm LGUI S    &hm LCTRL D  &hm LSHIFT F      &kp G    &kp H  &hm RSHFT J  &hm RCTRL K  &hm RGUI L  &hm RALT SEMICOLON
-    &lt MacSym ESCAPE  &kp Z       &kp X          &kp C         &kp V      &kp B    &kp N        &kp M    &kp COMMA     &kp DOT           &kp SLASH  &to Base
-                                           &mt LCTRL DEL  &lt MacNav TAB  &kp SPACE  &kp RET   &lt MacSym BSPC    &kp MINUS
+                &kp Q       &kp W       &kp E        &kp R        &kp T         &kp Y         &kp U          &ht_i_aa          &ht_o_ae          &ht_p_oslash
+       &hm LALT A  &hm LGUI S  &hm LCTRL D  &hm LSHIFT F      &kp G         &kp H    &hm RSHFT J    &hm RCTRL K       &hm RGUI L  &hm RALT SEMICOLON
+&lt MacSym ESCAPE       &kp Z       &kp X          &kp C         &kp V      &kp B         &kp N         &kp M      &kp COMMA        &kp DOT           &kp SLASH  &to Base
+                                        &mt LCTRL DEL  &lt MacNav TAB  &kp SPACE     &kp RET  &lt MacSym BSPC        &kp MINUS
             >;
         };
 
