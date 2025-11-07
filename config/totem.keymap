@@ -89,27 +89,66 @@
                 ;
         };
 
-        // Line navigation macros
-        ctrl_home: ctrl_home {
+        // Line selection macros
+        shift_home: shift_home {
             compatible = "zmk,behavior-macro";
-            label = "CTRL_HOME";
+            label = "SHIFT_HOME";
             #binding-cells = <0>;
             bindings
-                = <&macro_press &kp LCTRL>
+                = <&macro_press &kp LSHIFT>
                 , <&macro_tap &kp HOME>
-                , <&macro_release &kp LCTRL>
+                , <&macro_release &kp LSHIFT>
                 ;
         };
 
-        ctrl_end: ctrl_end {
+        shift_end: shift_end {
             compatible = "zmk,behavior-macro";
-            label = "CTRL_END";
+            label = "SHIFT_END";
             #binding-cells = <0>;
             bindings
-                = <&macro_press &kp LCTRL>
+                = <&macro_press &kp LSHIFT>
                 , <&macro_tap &kp END>
-                , <&macro_release &kp LCTRL>
+                , <&macro_release &kp LSHIFT>
                 ;
+        };
+
+        // Tap dance for shift home/end
+        td_select: td_select {
+            compatible = "zmk,behavior-tap-dance";
+            label = "TAP_DANCE_SELECT";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&shift_home>, <&shift_end>;
+        };
+
+        // Tap dance for ? and *
+        td_question_multiply: td_question_multiply {
+            compatible = "zmk,behavior-tap-dance";
+            label = "QUESTION_MULTIPLY";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp LS(MINUS)>, <&kp KP_MULTIPLY>;
+        };
+
+        // Tap dance for ; and :
+        td_semi_colon: td_semi_colon {
+            compatible = "zmk,behavior-tap-dance";
+            label = "SEMI_COLON";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp SEMICOLON>, <&kp LS(DOT)>;
+        };
+
+        // Home row mod with tap dance for semicolon/colon
+        hm_semi: hm_semi {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HM_SEMI";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <125>;
+            global-quick-tap;
+            bindings = <&kp>, <&td_semi_colon>;
         };
 
         // Hold-tap behaviors for Nordic characters
@@ -155,7 +194,7 @@
             label = "Base";
             bindings = <
                 &kp Q       &kp W       &kp E        &kp R        &kp T         &kp Y         &kp U       &ht_i_aa LBKT I       &ht_o_ae SQT O       &ht_p_oslash SEMI P
-       &hm LGUI A  &hm LALT S  &hm LCTRL D  &hm LSHIFT F      &kp G         &kp H    &hm RSHFT J    &hm RCTRL K       &hm RALT L  &hm RGUI SEMICOLON
+       &hm LGUI A  &hm LALT S  &hm LCTRL D  &hm LSHIFT F      &kp G         &kp H    &hm RSHFT J    &hm RCTRL K       &hm RALT L  &hm_semi RGUI 0
 &lt Fun ESCAPE       &kp Z       &kp X          &kp C         &kp V      &kp B         &kp N         &kp M      &kp COMMA        &kp DOT           &kp SLASH  &lt Button F5
                                         &mt LCTRL DEL     &lt Nav TAB  &kp SPACE     &kp RET  &lt Sym BSPC        &kp MINUS
             >;
@@ -164,10 +203,10 @@
         Nav {
             label = "Nav";
             bindings = <
-                      &trans       &trans  &kp UP_ARROW     &trans  &kp LBRC  &kp RBRC  &kp NUMBER_7  &kp NUMBER_8  &kp NUMBER_9         &kp PLUS
-              &kp LSHIFT     &kp LEFT      &kp DOWN  &kp RIGHT  &kp LBKT  &kp RBKT  &kp NUMBER_4  &kp NUMBER_5  &kp NUMBER_6        &kp MINUS
-&kp LCTRL          &trans  &kp PAGE_UP        &trans  &kp PG_DN  &kp LPAR  &kp RPAR  &kp NUMBER_1  &kp NUMBER_2  &kp NUMBER_3  &kp KP_MULTIPLY  &ctrl_home
-                                                 &trans     &trans    &trans    &trans  &ctrl_end  &kp NUMBER_0
+                      &trans       &trans  &kp UP_ARROW     &trans  &kp RA(N7)  &kp RA(N0)  &kp NUMBER_7  &kp NUMBER_8  &kp NUMBER_9         &kp PLUS
+              &kp LSHIFT     &kp LEFT      &kp DOWN  &kp RIGHT  &kp RA(N8)  &kp RA(N9)  &kp NUMBER_4  &kp NUMBER_5  &kp NUMBER_6        &kp MINUS
+&kp LCTRL          &trans  &kp PAGE_UP        &trans  &kp PG_DN  &kp LS(N8)  &kp LS(N9)  &kp NUMBER_1  &kp NUMBER_2  &kp NUMBER_3  &td_question_multiply  &td_select
+                                                 &trans     &trans    &trans    &trans        &trans  &kp NUMBER_0
             >;
         };
 
@@ -185,8 +224,8 @@
             label = "Fun";
             bindings = <
          &kp F1   &kp F2  &kp F3   &kp F4   &kp F5   &kp F6      &kp F7       &kp F8            &kp F9      &kp F10
-        &kp F11  &kp F12  &kp SLASH  &kp BSLH   &to MacBase  &kp HOME  &kp PG_DN  &kp PG_UP      &kp END      &kp DEL
-&trans   &trans   &trans  &kp SEMI  &kp COLON  &trans  &kp INS  &kp PSCRN    &kp PAUSE_BREAK  &kp SLCK  &kp CAPS  &trans
+        &kp F11  &kp F12  &kp SLASH  &kp RA(MINUS)   &to MacBase  &kp HOME  &kp PG_DN  &kp PG_UP      &kp END      &kp DEL
+&trans   &trans   &trans  &td_semi_colon  &trans  &trans  &kp INS  &kp PSCRN    &kp PAUSE_BREAK  &kp SLCK  &kp CAPS  &trans
                            &trans   &trans  &trans   &trans     &trans       &trans
             >;
         };
@@ -205,7 +244,7 @@
             label = "Mac";
             bindings = <
                 &kp Q       &kp W       &kp E        &kp R        &kp T         &kp Y         &kp U       &ht_i_aa LBKT I       &ht_o_ae SQT O       &ht_p_oslash SEMI P
-       &hm LALT A  &hm LGUI S  &hm LCTRL D  &hm LSHIFT F      &kp G         &kp H    &hm RSHFT J    &hm RCTRL K       &hm RGUI L  &hm RALT SEMICOLON
+       &hm LALT A  &hm LGUI S  &hm LCTRL D  &hm LSHIFT F      &kp G         &kp H    &hm RSHFT J    &hm RCTRL K       &hm RGUI L  &hm_semi RALT 0
 &lt MacSym ESCAPE       &kp Z       &kp X          &kp C         &kp V      &kp B         &kp N         &kp M      &kp COMMA        &kp DOT           &kp SLASH  &kp F5
                                         &mt LCTRL DEL  &lt MacNav TAB  &kp SPACE     &kp RET  &lt MacSym BSPC        &kp MINUS
             >;
@@ -214,10 +253,10 @@
         MacNav {
             label = "MacNav";
             bindings = <
-                      &trans       &trans  &kp UP_ARROW     &trans  &kp LBRC  &kp RBRC  &kp NUMBER_7  &kp NUMBER_8  &kp NUMBER_9         &kp PLUS
-              &kp LSHIFT     &kp LEFT      &kp DOWN  &kp RIGHT  &kp LBKT  &kp RBKT  &kp NUMBER_4  &kp NUMBER_5  &kp NUMBER_6        &kp MINUS
-&kp LCTRL          &trans  &kp PAGE_UP        &trans  &kp PG_DN  &kp LPAR  &kp RPAR  &kp NUMBER_1  &kp NUMBER_2  &kp NUMBER_3  &kp KP_MULTIPLY  &ctrl_home
-                                                 &trans     &trans    &trans    &trans  &ctrl_end  &kp NUMBER_0
+                      &trans       &trans  &kp UP_ARROW     &trans  &kp RA(N7)  &kp RA(N0)  &kp NUMBER_7  &kp NUMBER_8  &kp NUMBER_9         &kp PLUS
+              &kp LSHIFT     &kp LEFT      &kp DOWN  &kp RIGHT  &kp RA(N8)  &kp RA(N9)  &kp NUMBER_4  &kp NUMBER_5  &kp NUMBER_6        &kp MINUS
+&kp LCTRL          &trans  &kp PAGE_UP        &trans  &kp PG_DN  &kp LS(N8)  &kp LS(N9)  &kp NUMBER_1  &kp NUMBER_2  &kp NUMBER_3  &td_question_multiply  &td_select
+                                                 &trans     &trans    &trans    &trans        &trans  &kp NUMBER_0
             >;
         };
 
