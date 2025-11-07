@@ -112,6 +112,29 @@
                 ;
         };
 
+        // Macros for symbols
+        question_mark: question_mark {
+            compatible = "zmk,behavior-macro";
+            label = "QUESTION_MARK";
+            #binding-cells = <0>;
+            bindings
+                = <&macro_press &kp LSHIFT>
+                , <&macro_tap &kp MINUS>
+                , <&macro_release &kp LSHIFT>
+                ;
+        };
+
+        colon_key: colon_key {
+            compatible = "zmk,behavior-macro";
+            label = "COLON_KEY";
+            #binding-cells = <0>;
+            bindings
+                = <&macro_press &kp LSHIFT>
+                , <&macro_tap &kp DOT>
+                , <&macro_release &kp LSHIFT>
+                ;
+        };
+
         // Tap dance for shift home/end
         td_select: td_select {
             compatible = "zmk,behavior-tap-dance";
@@ -127,7 +150,7 @@
             label = "QUESTION_MULTIPLY";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
-            bindings = <&kp LS(MINUS)>, <&kp KP_MULTIPLY>;
+            bindings = <&question_mark>, <&kp KP_MULTIPLY>;
         };
 
         // Tap dance for ; and :
@@ -136,7 +159,7 @@
             label = "SEMI_COLON";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
-            bindings = <&kp SEMICOLON>, <&kp LS(DOT)>;
+            bindings = <&kp SEMICOLON>, <&colon_key>;
         };
 
         // Home row mod with tap dance for semicolon/colon
