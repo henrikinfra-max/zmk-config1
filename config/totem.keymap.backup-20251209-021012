@@ -1,0 +1,371 @@
+//
+//                                                        ▀▀▀▀▀     ▀▀▀▀▀          ▀▀█▀▀
+//                                                        ▄▀▀▀▄  ▄  ▄▀▀▀▄  ▄  ▄▀▀▀▄  █  ▄▀▀▀▄
+//                                                        █   █  █  █   █  █  █   █  █  █   █
+//                                                         ▀▀▀   █   ▀▀▀   █   ▀▀▀   ▀   ▀▀▀
+//                                                               █      ▄▄▄█▄▄▄    █   █  
+//                                                               ▀      █  █  █     █▄█
+//                                                             ▀▀▀▀▀    █  █  █      ▀
+//                                                                      ▀  ▀  ▀
+//
+// Totem ZMK Nordic Edition (Base: Multi-layer Gaming Layout + Nordic Double-Tap)
+//
+
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/ext_power.h>
+#include <dt-bindings/zmk/keys.h>
+
+#define Base        0
+#define Nav         1
+#define Sym         2
+#define Fun         3
+#define Button      4
+#define MacBase     5
+#define MacNav      6
+#define MacSym      7
+#define MacRect     8
+
+&mt {
+    quick-tap-ms = <100>;
+    global-quick-tap;
+    flavor = "tap-preferred";
+    tapping-term-ms = <170>;
+};
+
+&lt {
+    tapping-term-ms = <240>;
+    flavor = "balanced";
+    quick-tap-ms = <150>;
+};
+
+//
+// ─── Custom Behaviors ────────────────────────────────────────────────────────────
+//
+
+/ {
+    behaviors {
+        hm: homerow_mods {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HOMEROW_MODS";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <125>;
+            global-quick-tap;
+            bindings = <&kp>, <&kp>;
+        };
+
+        // Macros for Nordic characters
+        aa_macro: aa_macro {
+            compatible = "zmk,behavior-macro";
+            label = "AA_MACRO";
+            #binding-cells = <0>;
+            bindings
+                = <&macro_press &kp RALT>
+                , <&macro_tap &kp A>
+                , <&macro_release &kp RALT>
+                ;
+        };
+
+        ae_macro: ae_macro {
+            compatible = "zmk,behavior-macro";
+            label = "AE_MACRO";
+            #binding-cells = <0>;
+            bindings
+                = <&macro_press &kp RALT>
+                , <&macro_tap &kp SEMICOLON>
+                , <&macro_release &kp RALT>
+                ;
+        };
+
+        oslash_macro: oslash_macro {
+            compatible = "zmk,behavior-macro";
+            label = "OSLASH_MACRO";
+            #binding-cells = <0>;
+            bindings
+                = <&macro_press &kp RALT>
+                , <&macro_tap &kp O>
+                , <&macro_release &kp RALT>
+                ;
+        };
+
+        // Line selection macros
+        shift_home: shift_home {
+            compatible = "zmk,behavior-macro";
+            label = "SHIFT_HOME";
+            #binding-cells = <0>;
+            bindings
+                = <&macro_press &kp LSHIFT>
+                , <&macro_tap &kp HOME>
+                , <&macro_release &kp LSHIFT>
+                ;
+        };
+
+        shift_end: shift_end {
+            compatible = "zmk,behavior-macro";
+            label = "SHIFT_END";
+            #binding-cells = <0>;
+            bindings
+                = <&macro_press &kp LSHIFT>
+                , <&macro_tap &kp END>
+                , <&macro_release &kp LSHIFT>
+                ;
+        };
+
+        // Macros for symbols
+        question_mark: question_mark {
+            compatible = "zmk,behavior-macro";
+            label = "QUESTION_MARK";
+            #binding-cells = <0>;
+            bindings
+                = <&macro_press &kp LSHIFT>
+                , <&macro_tap &kp MINUS>
+                , <&macro_release &kp LSHIFT>
+                ;
+        };
+
+        colon_key: colon_key {
+            compatible = "zmk,behavior-macro";
+            label = "COLON_KEY";
+            #binding-cells = <0>;
+            bindings
+                = <&macro_press &kp LSHIFT>
+                , <&macro_tap &kp DOT>
+                , <&macro_release &kp LSHIFT>
+                ;
+        };
+
+        // Tap dance for shift home/end
+        td_select: td_select {
+            compatible = "zmk,behavior-tap-dance";
+            label = "TAP_DANCE_SELECT";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&shift_home>, <&shift_end>;
+        };
+
+        // Tap dance for ? and *
+        td_question_multiply: td_question_multiply {
+            compatible = "zmk,behavior-tap-dance";
+            label = "QUESTION_MULTIPLY";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&question_mark>, <&kp KP_MULTIPLY>;
+        };
+
+        // Tap dance for ; and :
+        td_semi_colon: td_semi_colon {
+            compatible = "zmk,behavior-tap-dance";
+            label = "SEMI_COLON";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&kp SEMICOLON>, <&colon_key>;
+        };
+
+        // Home row mod with tap dance for semicolon/colon
+        hm_semi: hm_semi {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HM_SEMI";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <125>;
+            global-quick-tap;
+            bindings = <&kp>, <&td_semi_colon>;
+        };
+
+        // Hold-tap behaviors for Nordic characters
+        ht_i_aa: ht_i_aa {
+            compatible = "zmk,behavior-hold-tap";
+            label = "I_AA";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <250>;
+            quick-tap-ms = <125>;
+            bindings = <&kp>, <&kp>;
+        };
+
+        ht_o_ae: ht_o_ae {
+            compatible = "zmk,behavior-hold-tap";
+            label = "O_AE";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <250>;
+            quick-tap-ms = <125>;
+            bindings = <&kp>, <&kp>;
+        };
+
+        ht_p_oslash: ht_p_oslash {
+            compatible = "zmk,behavior-hold-tap";
+            label = "P_OSLASH";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <250>;
+            quick-tap-ms = <125>;
+            bindings = <&kp>, <&kp>;
+        };
+
+        // Mod-morph for CTRL+A and CTRL+D when needed in terminal
+        // This allows tapping the modifier keys to send the letter with CTRL
+        ctrl_a_morph: ctrl_a_morph {
+            compatible = "zmk,behavior-mod-morph";
+            label = "CTRL_A_MORPH";
+            #binding-cells = <0>;
+            bindings = <&kp A>, <&kp LC(A)>;
+            mods = <(MOD_LCTL|MOD_RCTL)>;
+        };
+
+        ctrl_d_morph: ctrl_d_morph {
+            compatible = "zmk,behavior-mod-morph";
+            label = "CTRL_D_MORPH";
+            #binding-cells = <0>;
+            bindings = <&kp D>, <&kp LC(D)>;
+            mods = <(MOD_LCTL|MOD_RCTL)>;
+        };
+    };
+
+    combos {
+        compatible = "zmk,combos";
+
+        // Brackets and Braces - Nordic-safe for macOS Norwegian layout
+        combo_lbrace { bindings = <&kp RA(N7)>; key-positions = <13 14>; layers = <0 5>; }; // A+S = { (AltGr+7)
+        combo_rbrace { bindings = <&kp RA(N0)>; key-positions = <14 15>; layers = <0 5>; }; // S+D = } (AltGr+0)
+        combo_lbracket { bindings = <&kp RA(N8)>; key-positions = <3 4>; layers = <0 5>; }; // R+T = [ (AltGr+8)
+        combo_rbracket { bindings = <&kp RA(N9)>; key-positions = <5 6>; layers = <0 5>; }; // Y+U = ] (AltGr+9)
+        combo_lparen { bindings = <&kp LS(N8)>; key-positions = <23 24>; layers = <0 5>; }; // Z+X = ( (Shift+8)
+        combo_rparen { bindings = <&kp LS(N9)>; key-positions = <24 25>; layers = <0 5>; }; // X+C = ) (Shift+9)
+
+        // Programming Operators (Nordic-safe)
+        combo_arrow { bindings = <&kp LS(N0) &kp LS(NUBS)>; key-positions = <15 16>; layers = <0 5>; }; // D+F = => (Shift+0, Shift+<)
+        combo_not_equal { bindings = <&kp LS(N1) &kp LS(N0)>; key-positions = <2 3>; layers = <0 5>; }; // E+R = != (Shift+1, Shift+0)
+        combo_colon_equal { bindings = <&kp LS(DOT) &kp LS(N0)>; key-positions = <4 5>; layers = <0 5>; }; // T+Y = := (Shift+., Shift+0)
+        combo_double_equal { bindings = <&kp LS(N0) &kp LS(N0)>; key-positions = <16 17>; layers = <0 5>; }; // F+G = == (Shift+0, Shift+0)
+
+        // Backtick - Critical for developers
+        combo_backtick { bindings = <&kp GRAVE>; key-positions = <1 2>; layers = <0 5>; }; // W+E = `
+
+        // Double characters (Nordic-safe)
+        combo_double_slash { bindings = <&kp LS(N7) &kp LS(N7)>; key-positions = <28 29>; layers = <0 5>; }; // ,+. = // (Shift+7, Shift+7)
+        combo_double_pipe { bindings = <&kp RA(N7) &kp RA(N7)>; key-positions = <17 18>; layers = <0 5>; }; // G+H = || (AltGr+7, AltGr+7)
+        combo_double_amp { bindings = <&kp LS(N6) &kp LS(N6)>; key-positions = <6 7>; layers = <0 5>; }; // U+I = && (Shift+6, Shift+6)
+
+        // Angle brackets for generics (Nordic-safe)
+        combo_less_than { bindings = <&kp NUBS>; key-positions = <26 27>; layers = <0>; }; // C+V = < (< key, Windows only - N+M on Mac is screenshot)
+        combo_greater_than { bindings = <&kp LS(NUBS)>; key-positions = <27 28>; layers = <0 5>; }; // V+B = > (Shift+<)
+
+        // Underscore (Nordic-safe)
+        combo_underscore { bindings = <&kp LS(MINUS)>; key-positions = <22 23>; layers = <0 5>; }; // ESC+Z = _ (Shift+-)
+
+        // Pipe for SQL and shell (Nordic-safe)
+        combo_pipe { bindings = <&kp RA(N7)>; key-positions = <7 8>; layers = <0 5>; }; // I+O = | (AltGr+7)
+
+        // Tilde for home directory (Nordic-safe)
+        combo_tilde { bindings = <&kp RA(RBKT)>; key-positions = <18 19>; layers = <0 5>; }; // K+L = ~ (AltGr+])
+
+        // Dollar for shell variables (Nordic-safe)
+        combo_dollar { bindings = <&kp LS(N4)>; key-positions = <0 1>; layers = <0 5>; }; // Q+W = $ (Shift+4)
+
+        // Windows/Linux shortcuts
+        combo_win_space { bindings = <&kp LG(SPACE)>; key-positions = <13 33>; layers = <0>; }; // A+Space = Win+Space (input switch)
+
+        // Mac shortcuts (only active on Mac layer)
+        combo_spotlight { bindings = <&kp LG(SPACE)>; key-positions = <13 33>; layers = <5>; }; // A+Space = CMD+Space (Spotlight)
+        combo_mac_screenshot_area { bindings = <&kp LG(LS(N4))>; key-positions = <26 27>; layers = <5>; }; // N+M = CMD+Shift+4 (area screenshot)
+        combo_mac_screenshot_window { bindings = <&kp LG(LS(N5))>; key-positions = <27 29>; layers = <5>; }; // M+. = CMD+Shift+5 (screenshot menu)
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+
+        Base {
+            label = "Base";
+            bindings = <
+                &kp Q       &kp W       &kp E        &kp R        &kp T         &kp Y         &kp U       &ht_i_aa LBKT I       &ht_o_ae SQT O       &ht_p_oslash SEMI P
+       &hm LGUI A  &hm LALT S  &hm LCTRL D  &hm LSHIFT F      &kp G         &kp H    &hm RSHFT J    &hm RCTRL K       &hm RALT L  &hm_semi RGUI 0
+&lt Fun ESCAPE       &kp Z       &kp X          &kp C         &kp V      &kp B         &kp N         &kp M      &kp COMMA        &kp DOT           &kp SLASH  &lt Button F5
+                                        &mt LCTRL DEL     &lt Nav TAB  &kp SPACE     &kp RET  &lt Sym BSPC        &kp MINUS
+            >;
+        };
+
+        Nav {
+            label = "Nav";
+            bindings = <
+              &kp LS(N1)  &kp RA(N2)  &kp UP_ARROW    &kp LS(N4)  &kp LS(N5)  &kp RA(N7)  &kp NUMBER_7  &kp NUMBER_8  &kp NUMBER_9  &kp NUMBER_0
+              &kp LS(N0)  &kp LEFT    &kp DOWN        &kp RIGHT   &kp RA(N7)  &kp RA(N0)  &kp NUMBER_4  &kp NUMBER_5  &kp NUMBER_6  &kp PLUS
+&trans        &kp MINUS   &kp PAGE_UP &kp LS(MINUS)   &kp PG_DN   &kp RA(N8)  &kp RA(N9)  &kp NUMBER_1  &kp NUMBER_2  &kp NUMBER_3  &kp MINUS  &td_select
+                                      &trans          &trans      &trans      &trans      &trans        &trans
+            >;
+        };
+
+        Sym {
+            label = "Sym";
+            bindings = <
+        &kp LS(N1)    &kp RA(N2)      &kp LS(N3)      &kp LS(N4)    &kp LS(N5)     &kp LS(RBKT)    &kp LS(N6)    &kp RA(NUBS)    &kp LS(N8)      &kp LS(N9)
+        &kp LS(N0)    &kp PLUS        &kp RA(N7)      &kp RA(N0)    &kp RA(N7)     &kp RA(EQUAL)   &kp RA(N8)    &kp RA(N9)      &kp LS(COMMA)   &kp LS(DOT)
+&trans  &kp MINUS     &kp LS(MINUS)   &kp LS(EQUAL)   &kp RA(RBKT)  &kp LS(N2)     &kp NUBS        &kp LS(NUBS)  &kp GRAVE       &kp LS(N7)      &kp RA(MINUS)  &trans
+                                      &trans          &trans        &trans         &trans          &trans        &trans
+            >;
+        };
+
+        Fun {
+            label = "Fun";
+            bindings = <
+         &kp F1   &kp F2  &kp F3   &kp F4   &kp F5     &kp F6      &kp F7       &kp F8            &kp F9      &kp F10
+        &kp F11  &kp F12  &trans  &trans   &tog 5     &kp HOME  &kp PG_DN  &kp PG_UP      &kp END      &kp DEL
+&trans   &trans   &trans  &trans  &trans  &trans     &kp INS  &kp PSCRN    &kp PAUSE_BREAK  &kp SLCK  &kp CAPS  &trans
+                           &trans   &trans  &trans     &trans     &trans       &trans
+            >;
+        };
+
+        Button {
+            label = "Button";
+            bindings = <
+                    &bt BT_CLR    &trans     &trans      &trans  &bt BT_SEL 0      &trans            &trans      &trans  &bootloader    &trans
+                      &kp LGUI  &kp LALT  &kp LCTRL  &kp LSHIFT  &bt BT_SEL 1      &trans        &kp RSHIFT   &kp RCTRL     &kp RALT  &kp RGUI
+&bootloader  &ext_power EP_TOG    &trans     &trans      &trans  &bt BT_SEL 2      &trans            &trans      &trans       &trans    &trans  &trans
+                                             &trans      &trans        &trans  &kp C_PREV  &kp C_PLAY_PAUSE  &kp C_NEXT
+            >;
+        };
+
+        MacBase {
+            label = "Mac";
+            bindings = <
+                &kp Q       &kp W       &kp E        &kp R        &kp T         &kp Y         &kp U       &ht_i_aa LBKT I       &ht_o_ae SQT O       &ht_p_oslash SEMI P
+       &hm LCTRL A  &hm LALT S  &hm LGUI D  &hm LSHIFT F      &kp G         &kp H    &hm RSHFT J    &hm RGUI K       &hm RALT L  &hm_semi RCTRL 0
+&lt Fun ESCAPE       &kp Z       &kp X          &kp C         &kp V      &kp B         &kp N         &kp M      &kp COMMA        &kp DOT           &kp SLASH  &lt MacRect F5
+                                        &mt LGUI DEL  &lt MacNav TAB  &kp SPACE     &kp RET  &lt MacSym BSPC        &kp MINUS
+            >;
+        };
+
+        MacNav {
+            label = "MacNav";
+            bindings = <
+              &kp LS(N1)  &kp RA(N2)  &kp UP_ARROW    &kp LS(N4)  &kp LS(N5)  &kp RA(N7)  &kp NUMBER_7  &kp NUMBER_8  &kp NUMBER_9  &kp NUMBER_0
+              &kp LS(N0)  &kp LEFT    &kp DOWN        &kp RIGHT   &kp RA(N7)  &kp RA(N0)  &kp NUMBER_4  &kp NUMBER_5  &kp NUMBER_6  &kp PLUS
+&trans        &kp MINUS   &kp PAGE_UP &kp LS(MINUS)   &kp PG_DN   &kp RA(N8)  &kp RA(N9)  &kp NUMBER_1  &kp NUMBER_2  &kp NUMBER_3  &kp MINUS  &td_select
+                                      &trans          &trans      &trans      &trans      &trans        &trans
+            >;
+        };
+
+        MacSym {
+            label = "MacSym";
+            bindings = <
+        &kp LS(N1)    &kp RA(N2)      &kp LS(N3)      &kp LS(N4)    &kp LS(N5)     &kp LS(RBKT)    &kp LS(N6)    &kp RA(NUBS)    &kp LS(N8)      &kp LS(N9)
+        &kp LS(N0)    &kp PLUS        &kp RA(N7)      &kp RA(N0)    &kp RA(N7)     &kp RA(EQUAL)   &kp RA(N8)    &kp RA(N9)      &kp LS(COMMA)   &kp LS(DOT)
+&trans  &kp MINUS     &kp LS(MINUS)   &kp LS(EQUAL)   &kp RA(RBKT)  &kp LS(N2)     &kp NUBS        &kp LS(NUBS)  &kp GRAVE       &kp LS(N7)      &kp RA(MINUS)  &trans
+                                      &trans          &trans        &trans         &trans          &trans        &trans
+            >;
+        };
+
+        MacRect {
+            label = "Rect";
+            bindings = <
+        &kp LC(LA(ENTER))  &kp LC(LA(UP))     &trans              &trans              &trans               &trans              &trans              &trans              &trans              &trans
+        &kp LC(LA(LEFT))   &kp LC(LA(DOWN))   &kp LC(LA(RIGHT))   &kp LC(LA(F))       &trans               &trans              &trans              &trans              &trans              &trans
+&trans  &kp LC(LA(U))      &kp LC(LA(I))      &kp LC(LA(C))       &kp LC(LA(ENTER))   &trans               &trans              &trans              &trans              &trans              &trans  &trans
+                                              &trans              &trans              &trans               &trans              &trans              &trans
+            >;
+        };
+    };
+};
