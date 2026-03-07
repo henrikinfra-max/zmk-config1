@@ -6,86 +6,105 @@
 //                                                               █      ▄▄▄█▄▄▄    █   █
 //                                                               ▀      █  █  █     █▄█
 //                                                             ▀▀▀▀▀    █  █  █      ▀
-//                                                                      ▀  ▀  ▀
+//                                                                       ▀  ▀  ▀
 //
-// Totem ZMK - Norwegian Programmer Edition
-// Mac Primary + Windows Secondary | No Gaming Layers
-// Nordic characters: å (I hold), æ (O hold), ø (P hold)
-// OS Switching: F5 position in Fun layer
-// Combos: N+M screenshot, Z+X F5
+// Totem ZMK — Mac Programmer Edition
+// Norwegian Mac Layout · SQL Optimised · 5 Layers · ZMK main branch
+//
+// Requires macOS keyboard set to "Norwegian" (Bokmål).
+//
+// ── HOME ROW MODS  (GACS order, pinky → index) ──────────────────────────────
+//   Left:  A=⌘Cmd  S=⌥Opt  D=^Ctrl  F=⇧Shift
+//   Right: J=⇧Shift  K=^Ctrl  L=⌥Opt  ;=;  (see note below)
+//
+//   NOTE: On Norwegian Mac, SEMI keycode → Ø.
+//   Position 19 (right pinky home) uses LS(COMMA) → ; (semicolon).
+//   Right pinky home:  tap=;   hold=⌘Cmd
+//
+// ── NORDIC CHARS  (hold for 250 ms on top row right hand) ───────────────────
+//   I hold → Å    O hold → Ø    P hold → Æ
+//   (tap gives the normal letter)
+//
+// ── LAYER ACCESS ─────────────────────────────────────────────────────────────
+//   Hold ESC  → Fun (3)      Tap ESC  → Escape
+//   Hold Tab  → Nav (1)      Tap Tab  → Tab
+//   Hold BSpc → Sym (2)      Tap BSpc → Backspace
+//   Hold '    → Button (4)   Tap '    → ' (NUHS → single quote on Norwegian)
+//
+// ── KEY NOTES  (Norwegian Mac layout differences from US) ───────────────────
+//   SLASH   → -     LS(SLASH) → _
+//   MINUS   → +     LS(MINUS) → ?
+//   LS(N0)  → =     LS(COMMA) → ;     LS(DOT)  → :     LS(N2) → "
+//   LS(N7)  → /     LS(N8)   → (     LS(N9)   → )     LS(N6) → &
+//   LS(N1)  → !     RA(N2)   → @     LS(N3)   → #     RA(N4) → $
+//   LS(N5)  → %     LS(RBKT) → ^     RA(RBKT) → ~
+//   RA(N7)  → {     RA(N8)   → [     RA(N9)   → ]     RA(N0) → }
+//   NUBS    → <     LS(NUBS) → >     RA(NUBS) → |
+//   NUHS    → '     LS(NUHS) → *     LS(N2)   → "
+//   BSLH    → \  (test first; EQUAL may give \ on some systems)
+//   GRAVE   → ` (may be dead key — test)
+//
+// ── COMBOS  (180 ms · bottom row only — home row excluded) ──────────────────
+//   Z + X  → Escape
+//   N + M  → Screenshot  (⌘⇧4)
+//
+// See docs/keymap-reference.md for the visual layer map.
 
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/ext_power.h>
 #include <dt-bindings/zmk/keys.h>
 
-// Mac layers
-#define MacBase     0
-#define MacNav      1
-#define MacSym      2
-#define MacFun      3
+#define BASE    0
+#define NAV     1
+#define SYM     2
+#define FUN     3
+#define BUTTON  4
 
-// Windows layers
-#define WinBase     4
-#define WinNav      5
-#define WinSym      6
-#define WinFun      7
-
-// Shared layer
-#define Button      8
+// ─── Global behaviour tweaks ────────────────────────────────────────────────
 
 &mt {
-    quick-tap-ms = <100>;
-    global-quick-tap;
+    tapping-term-ms = <200>;
     flavor = "tap-preferred";
-    tapping-term-ms = <170>;
-};
-
-&lt {
-    tapping-term-ms = <240>;
-    flavor = "balanced";
     quick-tap-ms = <150>;
 };
 
+&lt {
+    tapping-term-ms = <250>;
+    flavor = "balanced";
+    quick-tap-ms = <175>;
+};
+
+// ─── Root ───────────────────────────────────────────────────────────────────
+
 / {
+
     behaviors {
+
+        // Home row mod — balanced flavour + prior-idle guard.
+        // Prevents accidental modifier during fast typing.
+        // Hold action fires only if held past 280 ms OR released after another
+        // key that was pressed while this was held.
         hm: homerow_mods {
             compatible = "zmk,behavior-hold-tap";
-            label = "HOMEROW_MODS";
             #binding-cells = <2>;
-            flavor = "tap-preferred";
-            tapping-term-ms = <200>;
-            quick-tap-ms = <125>;
-            global-quick-tap;
+            flavor = "balanced";
+            tapping-term-ms = <280>;
+            quick-tap-ms = <175>;
+            require-prior-idle-ms = <150>;
             bindings = <&kp>, <&kp>;
         };
 
-        // Hold-tap for å (I hold)
-        ht_i_aa: ht_i_aa {
+        // Nordic character hold-tap — tap-preferred flavour.
+        // Tap quickly → normal letter.  Hold 250 ms → Nordic character.
+        // No prior-idle guard here so Norwegian characters work smoothly
+        // when typing Norwegian words in sequence.
+        //
+        //   &ht_no LBKT I   →  tap=I   hold=Å  (LBKT = Å on Norwegian Mac)
+        //   &ht_no SEMI O   →  tap=O   hold=Ø  (SEMI = Ø on Norwegian Mac)
+        //   &ht_no SQT  P   →  tap=P   hold=Æ  (SQT  = Æ on Norwegian Mac)
+        ht_no: hold_tap_nordic {
             compatible = "zmk,behavior-hold-tap";
-            label = "I_AA";
-            #binding-cells = <2>;
-            flavor = "tap-preferred";
-            tapping-term-ms = <250>;
-            quick-tap-ms = <125>;
-            bindings = <&kp>, <&kp>;
-        };
-
-        // Hold-tap for æ (O hold)
-        ht_o_ae: ht_o_ae {
-            compatible = "zmk,behavior-hold-tap";
-            label = "O_AE";
-            #binding-cells = <2>;
-            flavor = "tap-preferred";
-            tapping-term-ms = <250>;
-            quick-tap-ms = <125>;
-            bindings = <&kp>, <&kp>;
-        };
-
-        // Hold-tap for ø (P hold)
-        ht_p_oslash: ht_p_oslash {
-            compatible = "zmk,behavior-hold-tap";
-            label = "P_OSLASH";
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <250>;
@@ -93,160 +112,160 @@
             bindings = <&kp>, <&kp>;
         };
     };
+
+    // ── Combos ──────────────────────────────────────────────────────────────
+    //
+    // Bottom row only (positions 21-30).  Home row (10-19) is excluded to
+    // prevent conflicts with home row mods during normal typing.
 
     combos {
         compatible = "zmk,combos";
 
-        // Mac screenshot: N+M = Cmd+Shift+4
-        combo_mac_screenshot {
+        // Z(21) + X(22) → Escape
+        combo_escape {
+            bindings = <&kp ESC>;
+            key-positions = <21 22>;
+            timeout-ms = <180>;
+            require-prior-idle-ms = <150>;
+            layers = <BASE>;
+        };
+
+        // N(26) + M(27) → Screenshot  ⌘⇧4
+        combo_screenshot {
             bindings = <&kp LG(LS(N4))>;
             key-positions = <26 27>;
-            layers = <0>;
-        };
-
-        // Windows screenshot: N+M = Win+Shift+S
-        combo_win_screenshot {
-            bindings = <&kp LG(LS(S))>;
-            key-positions = <26 27>;
-            layers = <4>;
-        };
-
-        // Mac F5: Z+X
-        combo_f5_mac {
-            bindings = <&kp F5>;
-            key-positions = <21 22>;
-            layers = <0>;
-        };
-
-        // Windows F5: Z+X
-        combo_f5_win {
-            bindings = <&kp F5>;
-            key-positions = <21 22>;
-            layers = <4>;
+            timeout-ms = <180>;
+            require-prior-idle-ms = <150>;
+            layers = <BASE>;
         };
     };
+
+    // ── Keymap ──────────────────────────────────────────────────────────────
 
     keymap {
         compatible = "zmk,keymap";
 
-        // ─────────────────────────────────────────────────────────────
-        // MAC BASE LAYER (Primary)
-        // ─────────────────────────────────────────────────────────────
-        MacBase {
-            label = "Mac";
+        // ────────────────────────────────────────────────────────────────────
+        // 0 · BASE
+        //
+        //          Q       W       E       R       T    │    Y       U       I(Å)    O(Ø)    P(Æ)
+        //         A⌘      S⌥      D^      F⇧      G    │    H       J⇧      K^      L⌥      ;⌘
+        //  [Fun]   Z       X       C       V       B    │    N       M       ,       .       -   [BT]
+        //               Del⌘   Tab[Nav]  Spc          │  Enter  BSp[Sym]  =
+        //
+        //  Position notes (Norwegian Mac):
+        //    Pos 19 right pinky home: tap=; (LS(COMMA))  hold=⌘Cmd
+        //    Pos 30 /: tap=-   (SLASH → minus on Norwegian)
+        //    Pos 31 ': tap='   (NUHS  → single quote on Norwegian)  hold=Button
+        //    Pos 37 =: tap==   (LS(N0) → equals on Norwegian)
+        //    I/O/P: hold 250 ms for Å/Ø/Æ
+        // ────────────────────────────────────────────────────────────────────
+        Base {
             bindings = <
-                   &kp Q       &kp W       &kp E        &kp R      &kp T         &kp Y         &kp U       &ht_i_aa LBKT I       &ht_o_ae SQT O       &ht_p_oslash SEMI P
-              &hm LALT A  &hm LGUI S  &hm LCTRL D  &hm LSHIFT F      &kp G         &kp H    &hm RSHFT J    &hm RCTRL K       &hm RGUI L            &hm RALT SEMICOLON
-&lt MacFun ESCAPE       &kp Z       &kp X          &kp C         &kp V      &kp B         &kp N         &kp M      &kp COMMA        &kp DOT                &kp SLASH  &lt Button APOSTROPHE
-                                           &mt LGUI DEL  &lt MacNav TAB  &kp SPACE     &kp RET  &lt MacSym BSPC        &kp MINUS
+                                &kp Q        &kp W        &kp E          &kp R           &kp T              &kp Y       &kp U     &ht_no LBKT I   &ht_no SEMI O   &ht_no SQT P
+                           &hm LGUI A   &hm LALT S   &hm LCTRL D   &hm LSHFT F          &kp G              &kp H   &hm RSHFT J   &hm RCTRL K      &hm RALT L   &hm RGUI LS(COMMA)
+            &lt FUN ESC        &kp Z        &kp X        &kp C          &kp V           &kp B              &kp N       &kp M      &kp COMMA        &kp DOT       &kp SLASH   &lt BUTTON NUHS
+                                       &mt LGUI DEL  &lt NAV TAB    &kp SPACE          &kp RET        &lt SYM BSPC  &kp LS(N0)
             >;
         };
 
-        // ─────────────────────────────────────────────────────────────
-        // MAC NAV LAYER (Numbers, Navigation, Arrows)
-        // ─────────────────────────────────────────────────────────────
-        MacNav {
-            label = "Nav";
+        // ────────────────────────────────────────────────────────────────────
+        // 1 · NAV  (hold Tab)
+        //
+        //       Tab   Undo    ↑    Redo   PgUp  │   ·    7    8    9   Bsp
+        //       ⌘      ←      ↓     →    PgDn  │   ·    4    5    6   Del
+        //   ·   Home   ·     End    ·      ·   │   ·    1    2    3    ·    ·
+        //              ·     [·]   Spc        │  Enter  0    .
+        //
+        //  Left hand handles undo/redo, arrows, page nav.
+        //  Right hand is a numpad: 7-8-9 top, 4-5-6 mid, 1-2-3 bottom.
+        //  Right thumb: 0 middle, dot inner.
+        //  ⌘ on A position — combine with arrows for word-jump (⌘←/⌘→),
+        //    line-start/end; with Z for undo, etc.
+        // ────────────────────────────────────────────────────────────────────
+        Nav {
             bindings = <
-              &kp LS(N1)    &kp BSLH   &kp UP       &kp LS(N3)  &kp LS(N5)  &trans       &kp N7        &kp N8        &kp N9         &kp KP_PLUS
-              &kp LGUI      &kp LEFT   &kp DOWN     &kp RIGHT   &kp LS(N4)  &kp LS(N6)   &kp N4        &kp N5        &kp N6        &kp KP_MINUS
-&kp LCTRL     &kp HOME      &kp PG_UP  &kp PG_DN    &kp END     &kp LS(N7)  &kp LS(N0)   &kp N1        &kp N2        &kp N3        &kp KP_MULTIPLY  &kp KP_DIVIDE
-                                       &trans       &trans      &trans      &trans       &kp N0        &kp DOT
+                        &kp TAB   &kp LG(Z)     &kp UP    &kp LG(LS(Z))  &kp PG_UP        &trans    &kp N7    &kp N8    &kp N9    &kp BSPC
+                       &kp LGUI    &kp LEFT     &kp DOWN     &kp RIGHT    &kp PG_DN        &trans    &kp N4    &kp N5    &kp N6    &kp DEL
+            &trans     &kp HOME     &trans       &kp END      &trans       &trans          &trans    &kp N1    &kp N2    &kp N3    &trans    &trans
+                                     &trans       &trans      &kp SPACE    &kp RET         &kp N0    &kp DOT
             >;
         };
 
-        // ─────────────────────────────────────────────────────────────
-        // MAC SYM LAYER (All Programming Symbols)
-        // Norwegian layout keycodes
-        // ─────────────────────────────────────────────────────────────
-        MacSym {
-            label = "Sym";
+        // ────────────────────────────────────────────────────────────────────
+        // 2 · SYM  (hold BSpc)
+        //
+        //       !      @      #      $      %   │   ^      [      ]      {      }
+        //       |      :      =      (      )   │   &      *      +      ;      "
+        //   ·   ~      `      <      >      \   │   _      -      '      ?      /   ·
+        //             Del    Tab    Spc        │  Enter  [·]    ·
+        //
+        //  All keycodes are Norwegian Mac — do NOT switch OS layout to US.
+        //
+        //  SQL-priority grouping:
+        //    Left home  | : = ( )   ← most-typed operators; right thumb holds layer
+        //    Right home & * + ; "   ← secondary; ; = statement terminator
+        //    Right top  [ ] { }     ← bracket pairs together
+        //    Left top   ! @ # $ %   ← less common in SQL
+        //    Bottom row ~ ` < > \   and   _ - ' ? /
+        //
+        //  Key mapping detail:
+        //    !  LS(N1)      @  RA(N2)      #  LS(N3)      $  RA(N4)      %  LS(N5)
+        //    ^  LS(RBKT)    [  RA(N8)      ]  RA(N9)      {  RA(N7)      }  RA(N0)
+        //    |  RA(NUBS)    :  LS(DOT)     =  LS(N0)      (  LS(N8)      )  LS(N9)
+        //    &  LS(N6)      *  LS(NUHS)    +  MINUS        ;  LS(COMMA)  "  LS(N2)
+        //    ~  RA(RBKT)    `  GRAVE       <  NUBS         >  LS(NUBS)   \  BSLH
+        //    _  LS(SLASH)   -  SLASH       '  NUHS         ?  LS(MINUS)  /  LS(N7)
+        //
+        //  Note: GRAVE may produce a dead key on Norwegian Mac — test this.
+        //  Note: BSLH for \ — if wrong, try EQUAL instead.
+        //  Note: RA(RBKT) for ~ — if wrong, try LS(RBKT) or RA(NUBS).
+        // ────────────────────────────────────────────────────────────────────
+        Sym {
             bindings = <
-        &kp LS(N1)    &kp BSLH        &kp LS(N3)      &kp LS(N4)    &kp LS(N5)     &kp LS(N6)      &kp LS(N7)    &kp LS(N8)       &kp LS(N9)      &kp LS(N0)
-        &kp RA(N8)    &kp LS(N8)      &kp RA(N7)      &kp NUBS      &kp LS(EQUAL)  &kp EQUAL       &kp LS(NUBS)  &kp RA(N9)       &kp LS(N9)      &kp RA(N0)
-&trans  &kp N0        &kp PLUS        &kp MINUS       &kp LS(MINUS) &kp RBKT       &kp LS(RBKT)    &kp SQT       &kp LS(SQT)      &kp GRAVE       &kp LS(GRAVE)  &trans
-                                      &trans          &trans        &trans         &trans          &trans        &trans
+                        &kp LS(N1)   &kp RA(N2)  &kp LS(N3)  &kp RA(N4)  &kp LS(N5)      &kp LS(RBKT)  &kp RA(N8)  &kp RA(N9)  &kp RA(N7)  &kp RA(N0)
+                        &kp RA(NUBS) &kp LS(DOT) &kp LS(N0)  &kp LS(N8)  &kp LS(N9)      &kp LS(N6)    &kp LS(NUHS) &kp MINUS  &kp LS(COMMA) &kp LS(N2)
+            &trans      &kp RA(RBKT) &kp GRAVE   &kp NUBS    &kp LS(NUBS) &kp BSLH        &kp LS(SLASH) &kp SLASH   &kp NUHS    &kp LS(MINUS) &kp LS(N7)  &trans
+                                      &kp DEL     &kp TAB     &kp SPACE    &kp RET         &trans        &trans
             >;
         };
 
-        // ─────────────────────────────────────────────────────────────
-        // MAC FUN LAYER (F-keys, System, OS Switch)
-        // F5 position = Switch to Windows mode
-        // ─────────────────────────────────────────────────────────────
-        MacFun {
-            label = "Fun";
+        // ────────────────────────────────────────────────────────────────────
+        // 3 · FUN  (hold ESC)
+        //
+        //       F1     F2     F3     F4     F5   │   F6     F7     F8     F9    F10
+        //      F11    F12     ·      ·      ·    │    ·    Home  PgDn   PgUp   End
+        //  [·]  ·      ·      ·      ·      ·    │   Ins   Del   Pause  ScLk   Caps   ·
+        //              ·      ·      ·           │    ·     ·      ·
+        // ────────────────────────────────────────────────────────────────────
+        Fun {
             bindings = <
-         &kp F1   &kp F2   &kp F3   &kp F4        &to WinBase  &kp F6   &kp F7   &kp F8          &kp F9       &kp F10
-        &kp F11  &kp F12   &trans   &trans        &trans       &trans   &kp HOME &kp PG_DN       &kp PG_UP    &kp END
-&trans   &trans   &trans   &trans   &trans        &trans       &kp INS  &kp DEL  &kp PAUSE_BREAK &kp SLCK     &kp CAPS  &trans
-                           &trans   &trans        &trans       &trans   &trans   &trans
+                       &kp F1   &kp F2   &kp F3   &kp F4   &kp F5         &kp F6    &kp F7    &kp F8          &kp F9    &kp F10
+                      &kp F11  &kp F12   &trans    &trans    &trans         &trans   &kp HOME  &kp PG_DN       &kp PG_UP  &kp END
+            &trans     &trans   &trans    &trans    &trans    &trans        &kp INS   &kp DEL  &kp PAUSE_BREAK  &kp SLCK  &kp CAPS  &trans
+                                 &trans    &trans    &trans    &trans        &trans    &trans
             >;
         };
 
-        // ─────────────────────────────────────────────────────────────
-        // WINDOWS BASE LAYER
-        // ─────────────────────────────────────────────────────────────
-        WinBase {
-            label = "Win";
-            bindings = <
-                   &kp Q       &kp W       &kp E        &kp R      &kp T         &kp Y         &kp U       &ht_i_aa LBKT I       &ht_o_ae SQT O       &ht_p_oslash SEMI P
-              &hm LGUI A  &hm LALT S  &hm LCTRL D  &hm LSHIFT F      &kp G         &kp H    &hm RSHFT J    &hm RCTRL K       &hm RALT L            &hm LGUI SEMICOLON
-&lt WinFun ESCAPE       &kp Z       &kp X          &kp C         &kp V      &kp B         &kp N         &kp M      &kp COMMA        &kp DOT                &kp SLASH  &lt Button APOSTROPHE
-                                           &mt LCTRL DEL  &lt WinNav TAB  &kp SPACE     &kp RET  &lt WinSym BSPC        &kp MINUS
-            >;
-        };
-
-        // ─────────────────────────────────────────────────────────────
-        // WINDOWS NAV LAYER (identical to Mac Nav)
-        // ─────────────────────────────────────────────────────────────
-        WinNav {
-            label = "WNav";
-            bindings = <
-              &kp LS(N1)    &kp BSLH   &kp UP       &kp LS(N3)  &kp LS(N5)  &trans       &kp N7        &kp N8        &kp N9         &kp KP_PLUS
-              &kp LSHIFT    &kp LEFT   &kp DOWN     &kp RIGHT   &kp LS(N4)  &kp LS(N6)   &kp N4        &kp N5        &kp N6        &kp KP_MINUS
-&kp LCTRL     &kp HOME      &kp PG_UP  &kp PG_DN    &kp END     &kp LS(N7)  &kp LS(N0)   &kp N1        &kp N2        &kp N3        &kp KP_MULTIPLY  &kp KP_DIVIDE
-                                       &trans       &trans      &trans      &trans       &kp N0        &kp DOT
-            >;
-        };
-
-        // ─────────────────────────────────────────────────────────────
-        // WINDOWS SYM LAYER (identical to Mac Sym)
-        // ─────────────────────────────────────────────────────────────
-        WinSym {
-            label = "WSym";
-            bindings = <
-        &kp LS(N1)    &kp BSLH        &kp LS(N3)      &kp LS(N4)    &kp LS(N5)     &kp LS(N6)      &kp LS(N7)    &kp LS(N8)       &kp LS(N9)      &kp LS(N0)
-        &kp RA(N8)    &kp LS(N8)      &kp RA(N7)      &kp NUBS      &kp LS(EQUAL)  &kp EQUAL       &kp LS(NUBS)  &kp RA(N9)       &kp LS(N9)      &kp RA(N0)
-&trans  &kp N0        &kp PLUS        &kp MINUS       &kp LS(MINUS) &kp RBKT       &kp LS(RBKT)    &kp SQT       &kp LS(SQT)      &kp GRAVE       &kp LS(GRAVE)  &trans
-                                      &trans          &trans        &trans         &trans          &trans        &trans
-            >;
-        };
-
-        // ─────────────────────────────────────────────────────────────
-        // WINDOWS FUN LAYER (F-keys, System, OS Switch back to Mac)
-        // F5 position = Switch back to Mac mode
-        // ─────────────────────────────────────────────────────────────
-        WinFun {
-            label = "WFun";
-            bindings = <
-         &kp F1   &kp F2   &kp F3   &kp F4        &to MacBase  &kp F6   &kp F7   &kp F8          &kp F9       &kp F10
-        &kp F11  &kp F12   &trans   &trans        &trans       &trans   &kp HOME &kp PG_DN       &kp PG_UP    &kp END
-&trans   &trans   &trans   &trans   &trans        &trans       &kp INS  &kp DEL  &kp PAUSE_BREAK &kp SLCK     &kp CAPS  &trans
-                           &trans   &trans        &trans       &trans   &trans   &trans
-            >;
-        };
-
-        // ─────────────────────────────────────────────────────────────
-        // BUTTON LAYER (Bluetooth, Media, Bootloader)
-        // Hold apostrophe to access
-        // ─────────────────────────────────────────────────────────────
+        // ────────────────────────────────────────────────────────────────────
+        // 4 · BUTTON  (hold ')
+        //
+        //      BtClr   ·      ·      ·    Bt0   │    ·      ·      ·    Boot    ·
+        //       ⌘      ⌥      ^      ⇧    Bt1   │    ·      ⇧      ^     ⌥      ⌘
+        //  Boot  EP    ·      ·      ·    Bt2   │    ·      ·      ·     ·      ·    ·
+        //               ·      ·      ·        │  Prev   Play   Next
+        //
+        //  BtClr = clear paired device on current profile
+        //  Bt0/1/2 = switch Bluetooth profile
+        //  Boot = enter bootloader (drag-and-drop firmware update)
+        //  EP = external power toggle
+        // ────────────────────────────────────────────────────────────────────
         Button {
-            label = "BT";
             bindings = <
-                    &bt BT_CLR    &trans     &trans      &trans  &bt BT_SEL 0      &trans            &trans      &trans  &bootloader    &trans
-                      &kp LGUI  &kp LALT  &kp LCTRL  &kp LSHIFT  &bt BT_SEL 1      &trans        &kp RSHIFT   &kp RCTRL     &kp RALT  &kp LGUI
-&bootloader  &ext_power EP_TOG    &trans     &trans      &trans  &bt BT_SEL 2      &trans            &trans      &trans       &trans    &trans  &trans
-                                             &trans      &trans        &trans  &kp C_PREV  &kp C_PLAY_PAUSE  &kp C_NEXT
+                        &bt BT_CLR      &trans       &trans       &trans    &bt BT_SEL 0        &trans          &trans       &trans    &bootloader    &trans
+                        &kp LGUI       &kp LALT    &kp LCTRL    &kp LSHFT  &bt BT_SEL 1        &trans       &kp RSHFT    &kp RCTRL     &kp RALT    &kp RGUI
+            &bootloader  &ext_power EP_TOG  &trans  &trans        &trans    &bt BT_SEL 2        &trans          &trans       &trans       &trans       &trans  &trans
+                                              &trans       &trans       &trans     &kp C_PREV  &kp C_PLAY_PAUSE  &kp C_NEXT
             >;
         };
     };
